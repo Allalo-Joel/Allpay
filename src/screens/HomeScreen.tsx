@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { getUserProfileAndBalance } from '../utils/user';
 
 // Define navigation param list
 type RootStackParamList = {
@@ -14,22 +15,42 @@ type RootStackParamList = {
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  const [userName, setUserName] = useState('');
+  const [balance, setBalance] = useState('0.00');
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userInfo = await getUserProfileAndBalance();
+      if (userInfo) {
+        setUserName(userInfo.name);
+        setBalance(userInfo.balance);
+      }
+    };
+    fetchUserData();
+  }, []);
+
   const menuItems = [
-    { name: '余额', icon: 'wallet-outline', route: 'Wallet' },
-    { name: '扫一扫', icon: 'scan-outline', route: 'Scan' },
-    { name: '转账', icon: 'send-outline', route: 'Transfer' },
-    { name: '我的', icon: 'person-outline', route: 'Profile' },
+    { name: 'Scan', icon: 'scan-outline', route: 'Scan' },
+    { name: 'Bus', icon: 'bus-outline', route: 'Wallet' },
+    { name: 'Taxis', icon: 'car-sport-outline', route: 'Transfer' },
+    { name: 'Loisirs', icon: 'ribbon-outline', route: 'Profile' },
+    { name: 'Facture', icon: 'wallet-outline', route: 'Wallet' },
+    { name: 'Pharmacie', icon: 'storefront-outline', route: 'Wallet' },
+    { name: 'Ticket', icon: 'create-outline', route: 'Wallet' },
+    { name: 'Urgence', icon: 'remove-circle-outline', route: 'Wallet' },
   ];
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 20 }}>
       <View style={styles.banner}>
         <View style={styles.bannerHeader}>
           <Ionicons name="person-circle-outline" size={32} color="#fff" />
-          <Text style={styles.bannerGreeting}>Hi, User</Text>
+          <Text style={styles.bannerGreeting}>{userName}</Text>
           <Ionicons name="notifications-outline" size={24} color="#fff" />
         </View>
-        <Text style={styles.balanceLabel}>Balance (¥)</Text>
-        <Text style={styles.balanceValue}>10,250.00</Text>
+        <Text style={styles.balanceLabel}>Balance (fcfa)</Text>
+        <Text style={styles.balanceValue}>{balance}.00</Text>
       </View>
       <View style={styles.grid}>
         {menuItems.map(item => (
@@ -39,7 +60,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate(item.route as any)}
           >
             <View style={styles.iconCircle}>
-              <Ionicons name={item.icon} size={24} color="#108EE9" />
+              <Ionicons name={item.icon} size={29} color="#FB512D" />
             </View>
             <Text style={styles.menuText}>{item.name}</Text>
           </TouchableOpacity>
@@ -54,11 +75,11 @@ const CARD_SIZE = (width - 60) / 4;
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f0f2f5' },
   banner: {
-    backgroundColor: '#108EE9',
+    backgroundColor: '#FB512D',
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     padding: 16,
-    paddingTop: 40,
+    paddingTop: 50,
   },
   bannerHeader: {
     flexDirection: 'row',
@@ -68,7 +89,7 @@ const styles = StyleSheet.create({
   },
   bannerGreeting: { color: '#fff', fontSize: 18, fontWeight: '600' },
   balanceLabel: { color: '#fff', fontSize: 14 },
-  balanceValue: { color: '#fff', fontSize: 32, fontWeight: 'bold', marginTop: 4 },
+  balanceValue: { color: '#fff', fontSize: 27, fontWeight: 'bold', marginTop: 4 },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
