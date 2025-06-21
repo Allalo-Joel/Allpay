@@ -50,7 +50,7 @@ export default function HomeScreen() {
           <Ionicons name="notifications-outline" size={24} color="#fff" />
         </View>
         <Text style={styles.balanceLabel}>Balance (fcfa)</Text>
-        <Text style={styles.balanceValue}>{balance}.00</Text>
+        <Text style={styles.balanceValue}>{balance}</Text>
       </View>
       <View style={styles.grid}>
         {menuItems.map(item => (
