@@ -1,66 +1,98 @@
 import { supabase } from '../lib/supabase';
 
-// Sign up and insert into 'users' table
-export const signUp = async (email: string, password: string, name: string) => {
-  const { data, error } = await supabase.auth.signUp({ email, password });
+/**
+ * Sign Up
+ */
+export const signUp = async (phone, password, { name, dob, job }) => {
+  const fakeEmail = `${phone}@allpay.app`;
 
-  if (error || !data.user) return { data: null, error };
+  const { data, error } = await supabase.auth.signUp({ email: fakeEmail, password });
+  if (error || !data?.user) {
+    return { data: null, error };
+  }
 
   const userId = data.user.id;
 
   const { error: insertError } = await supabase
     .from('users')
-    .insert([{ id: userId, email, password,name, user_type: 'client'}]);
+    .insert([
+      {
+        id: userId,
+        email: fakeEmail,
+        password,
+        name,
+        phone,
+        dob,
+        job,
+        user_type: 'client',
+        balance: 0,
+      },
+    ]);
 
-  if (insertError) return { data: null, error: insertError };
+  if (insertError) {
+    return { data: null, error: insertError };
+  }
 
   return { data, error: null };
 };
 
-// Sign in with email and password, and fetch user name from 'users' table
-export const signIn = async (email: string, password: string) => {
-  const { data: signInData, error } = await supabase.auth.signInWithPassword({ email, password });
+/**
+ * Sign In
+ */
+export const signIn = async (phone, password) => {
+  const fakeEmail = `${phone}@allpay.app`;
 
-  if (error || !signInData.session?.user) return { data: null, error };
+  const { data: signInData, error } = await supabase.auth.signInWithPassword({ email: fakeEmail, password });
+  if (error || !signInData.session?.user) {
+    return { data: null, error };
+  }
 
   const userId = signInData.session.user.id;
 
-  // Fetch user name from 'users' table
   const { data: userProfile, error: profileError } = await supabase
     .from('users')
-    .select('name')
+    .select('name, phone, dob, job, user_type, balance')
     .eq('id', userId)
     .single();
 
-  if (profileError) return { data: null, error: profileError };
+  if (profileError) {
+    return { data: null, error: profileError };
+  }
 
-  // ✅ You can now save this data in app storage or context
   const sessionInfo = {
     user: {
       id: userId,
-      email,
+      phone: userProfile.phone,
       name: userProfile.name,
+      dob: userProfile.dob,
+      job: userProfile.job,
+      user_type: userProfile.user_type,
+      balance: userProfile.balance,
     },
     session: signInData.session,
   };
-
   return { data: sessionInfo, error: null };
 };
 
-
-// Sign out current user
+/**
+ * Sign Out
+ */
 export const signOut = async () => {
   const { error } = await supabase.auth.signOut();
   return { error };
 };
 
-// Get current session
+/**
+ * Get Session
+ */
 export const getSession = async () => {
   const { data, error } = await supabase.auth.getSession();
   return { data, error };
 };
 
-// Fetch user profile from 'users' table
+/**
+ * Get User Profile
+ */
 export const getUserProfileAndBalance = async () => {
   const {
     data: { session },
@@ -73,7 +105,7 @@ export const getUserProfileAndBalance = async () => {
 
   const { data, error: userError } = await supabase
     .from('users')
-    .select('name')
+    .select('name, phone, dob, job, balance, user_type')
     .eq('id', userId)
     .single();
 
