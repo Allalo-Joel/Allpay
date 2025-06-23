@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ProfileScreen() {
   const [name, setName] = useState('');
@@ -30,15 +31,15 @@ export default function ProfileScreen() {
         }
       }
     };
-
     fetchProfile();
   }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    await AsyncStorage.removeItem('userLoggedIn'); // ❗️ KEY CHANGE
     navigation.reset({
       index: 0,
-      routes: [{ name: 'Login' }],
+      routes: [{ name: 'Login' }], // Navigates correctly
     });
   };
 
@@ -46,18 +47,22 @@ export default function ProfileScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Profile</Text>
       <View style={styles.profileBox}>
-        <Text style={styles.label}>Name : <Text style={styles.value}>  {name}</Text></Text>
-        <Text style={styles.label}>Email  : <Text style={styles.value}>  {type}</Text></Text>
-       <Text style={styles.label}>Email  : <Text style={styles.value}>  {email}</Text></Text>
-   </View>
+        <Text style={styles.label}>
+          Name: <Text style={styles.value}>{name}</Text>
+        </Text>
+        <Text style={styles.label}>
+          Type: <Text style={styles.value}>{type}</Text>
+        </Text>
+        <Text style={styles.label}>
+          Email: <Text style={styles.value}>{email}</Text>
+        </Text>
+      </View>
       <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
         <Text style={styles.logoutText}>Log Out</Text>
       </TouchableOpacity>
     </View>
   );
-}
-
-const styles = StyleSheet.create({
+}const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f6fa', padding: 16 },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 24, color: '#2c3e50', marginTop: 50, textAlign: 'center' },
   profileBox: {

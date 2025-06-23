@@ -25,31 +25,33 @@ const Tab = createBottomTabNavigator();
 function MainTabs() {
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarIcon: ({ color, size }) => {
-          let iconName = 'home-outline';
-          switch (route.name) {
-            case 'Home': iconName = 'home-outline'; break;
-            case 'Wallet': iconName = 'wallet-outline'; break;
-            case 'Transfer': iconName = 'send-outline'; break;
-            case 'Message': iconName = 'chatbubble-ellipses-outline'; break;
-            case 'Profile': iconName = 'person-outline'; break;
-            case 'Scan': iconName = 'scan-outline'; break;
-          }
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: '#FB512D',
-        tabBarInactiveTintColor: 'gray',
-        tabBarStyle: { backgroundColor: '#FFFFFF' },
-      })}
+      screenOptions={({ route }) => {
+        let iconName = 'home-outline';
+        switch (route.name) {
+          case 'Home': iconName = 'home-outline'; break;
+          case 'Wallet': iconName = 'wallet-outline'; break;
+          case 'Transfer': iconName = 'send-outline'; break;
+          case 'Message': iconName = 'chatbubble-ellipses-outline'; break;
+          case 'Profile': iconName = 'person-outline'; break;
+          case 'Scan': iconName = 'scan-outline'; break;
+        }
+        return {
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name={iconName} size={size} color={color} />
+          ),
+          tabBarActiveTintColor: '#FB512D',
+          tabBarInactiveTintColor: 'gray',
+          tabBarStyle: { backgroundColor: '#FFFFFF' },
+        };
+      }}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Wallet" component={WalletScreen} />
       <Tab.Screen name="Scan" component={ScanScreen} />
+      {/* <Tab.Screen name="Transfer" component={TransferScreen} /> */}
       <Tab.Screen name="Message" component={MessageScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
-      
     </Tab.Navigator>
   );
 }
@@ -78,7 +80,7 @@ export default function App() {
   }, []);
 
   if (loading) {
-    return null; // You can replace this with a proper Loading screen/spinner
+    return null; // You can replace this with a proper Loading screen
   }
 
   return (
