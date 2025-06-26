@@ -1,0 +1,23 @@
+# --- Général ---
+node_modules/
+.env*
+*.log
+
+# --- iOS ---
+ios/Pods/
+ios/Allpay.xcworkspace
+ios/build/
+ios/*.xcuserdata
+ios/*.xcuserstate
+# Xcode caches
+~/Library/Developer/Xcode/DerivedData/
+
+# --- Android ---
+android/.gradle/
+android/app/build/
+android/build/
+
+# --- React Native bundler outputs ---
+*.bundle
+*.keystore
+
