@@ -1,30 +1,38 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {
-  Camera,
-  useCameraDevices,
-} from 'react-native-vision-camera';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, StyleSheet, Alert } from 'react-native';
+import { Camera, useCameraDevices, useFrameProcessor } from 'react-native-vision-camera';
+import { scanBarcodes, BarcodeFormat } from 'vision-camera-code-scanner';
+import { runOnJS } from 'react-native-reanimated';
 
 const ScanScreen = () => {
   const [permission, setPermission] = useState<null | 'granted' | 'denied'>(null);
+  const [scannedData, setScannedData] = useState<string | null>(null);
   const devices = useCameraDevices();
   const device = devices.back;
 
   useEffect(() => {
     const requestPermission = async () => {
       const status = await Camera.requestCameraPermission();
-      console.log('[Camera Permission Status]', status);
       setPermission(status);
     };
     requestPermission();
   }, []);
 
-  useEffect(() => {
-    console.log('[Available Devices]', devices);
-  }, [devices]);
+  const handleBarcode = (data: string) => {
+    if (!scannedData) {
+      setScannedData(data);
+      Alert.alert('QR Code Scanned', data);
+    }
+  };
 
+  const frameProcessor = useFrameProcessor((frame) => {
+    'worklet';
+    const barcodes = scanBarcodes(frame, [BarcodeFormat.QR_CODE]);
+    if (barcodes.length > 0) {
+      runOnJS(handleBarcode)(barcodes[0].rawValue || '');
+    }
+  }, [scannedData]);
 
-  // 1️⃣ No permission granted
   if (permission === 'denied') {
     return (
       <View style={styles.center}>
@@ -33,7 +41,6 @@ const ScanScreen = () => {
     );
   }
 
-  // 2️⃣ Waiting for permission
   if (permission === null) {
     return (
       <View style={styles.center}>
@@ -42,7 +49,6 @@ const ScanScreen = () => {
     );
   }
 
-  // 3️⃣ No camera device found
   if (!device) {
     return (
       <View style={styles.center}>
@@ -51,10 +57,15 @@ const ScanScreen = () => {
     );
   }
 
-  // 4️⃣ Render the camera when permission granted and device found
   return (
     <View style={styles.container}>
-      <Camera style={styles.camera} device={device} isActive={true} />
+      <Camera
+        style={StyleSheet.absoluteFill}
+        device={device}
+        isActive={true}
+        frameProcessor={frameProcessor}
+        //frameProcessorFps={5}
+      />
       <View style={styles.scanBox}>
         <Text style={styles.scanText}>Align QR code inside the frame</Text>
       </View>
@@ -65,8 +76,7 @@ const ScanScreen = () => {
 export default ScanScreen;
 
 const styles = StyleSheet.create({
-  container: {flex: 1},
-  camera: {flex: 1},
+  container: { flex: 1 },
   scanBox: {
     position: 'absolute',
     top: '20%',

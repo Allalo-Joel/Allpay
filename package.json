@@ -31,8 +31,10 @@
     "react-native-toast-message": "^2.3.0",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-vector-icons": "^10.2.0",
-    "react-native-vision-camera": "^4.7.0",
-    "sonner-native": "^0.21.0"
+    "react-native-vision-camera": "^2.15.4",
+    "react-native-worklets-core": "^0.2.1",
+    "sonner-native": "^0.21.0",
+    "vision-camera-code-scanner": "^0.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -57,5 +59,8 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "react-native": {
+    "hermes-engine": "npm:@react-native/hermes-engine@latest"
   }
 }

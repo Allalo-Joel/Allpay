@@ -58,10 +58,14 @@ export default function HomeScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 30 }}>
       <View style={styles.banner}>
-        {/* Top Bar: Person | Search | Notification */}
         <View style={styles.bannerHeader}>
-          <Ionicons name="person-circle-outline" size={32} color="#fff" onPress={() => navigation.navigate('Profile')}/>
-          
+          <Ionicons
+            name="person-circle-outline"
+            size={32}
+            color="#fff"
+            onPress={() => navigation.navigate('Profile')}
+          />
+
           <View style={styles.searchContainer}>
             <Ionicons name="search-outline" size={18} color="#555" />
             <TextInput
@@ -76,7 +80,6 @@ export default function HomeScreen() {
           <Ionicons name="notifications-outline" size={24} color="#fff" />
         </View>
 
-        {/* Balance and User Name */}
         <Text style={styles.balanceLabel}>Balance (fcfa)</Text>
         <View style={styles.balanceRow}>
           <Text style={styles.balanceValue}>{balance}</Text>
@@ -84,36 +87,36 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* Menu Items */}
-       <Text style={styles.sectionHeader}> Services</Text>
-      <View style={styles.grid}>
+      <Text style={styles.sectionHeader}>Services</Text>
+      <View style={styles.serviceSection}>
         {menuItems.map((item) => (
           <TouchableOpacity
             key={item.name}
-            style={styles.menuCard}
+            style={styles.serviceCard}
             onPress={() => navigation.navigate(item.route as any)}
+            activeOpacity={0.8}
           >
-            <View style={styles.iconCircle}>
-              <Ionicons name={item.icon} size={29} color="#FB512D" />
+            <View style={styles.serviceIcon}>
+              <Ionicons name={item.icon} size={30} color="#FB512D" />
             </View>
-            <Text style={styles.menuText}>{item.name}</Text>
+            <Text style={styles.serviceText}>{item.name}</Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      {/* Additional Features */}
       <Text style={styles.sectionHeader}>More Services</Text>
-      <View style={styles.grid}>
+      <View style={styles.serviceSection}>
         {additionalFeatures.map((feature) => (
           <TouchableOpacity
             key={feature.name}
-            style={styles.menuCard}
+            style={styles.serviceCard}
             onPress={() => navigation.navigate(feature.route as any)}
+            activeOpacity={0.8}
           >
-            <View style={styles.iconCircle}>
-              <Ionicons name={feature.icon} size={29} color="#FB512D" />
+            <View style={styles.serviceIcon}>
+              <Ionicons name={feature.icon} size={30} color="#FB512D" />
             </View>
-            <Text style={styles.menuText}>{feature.name}</Text>
+            <Text style={styles.serviceText}>{feature.name}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -134,23 +137,23 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     padding: 16,
-    paddingTop: 50,
+    paddingTop: 40,
   },
   bannerHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    marginBottom: 30,
+    paddingTop: 20,
   },
   searchContainer: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 25,
-    marginHorizontal: 12,
+    width: '65%',
     elevation: 3,
   },
   searchInput: {
@@ -179,37 +182,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '900',
   },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 20,
-    marginHorizontal: 10,
-    justifyContent: 'space-between',
-  },
-  menuCard: {
-    width: CARD_SIZE,
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  iconCircle: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  menuText: {
-    marginTop: 8,
-    fontSize: 12,
-    color: '#333',
-    textAlign: 'center',
-  },
   sectionHeader: {
     fontSize: 16,
     fontWeight: '600',
@@ -217,5 +189,40 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     marginTop: 30,
     marginBottom: 10,
+  },
+  serviceSection: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginHorizontal: 12,
+  },
+  serviceCard: {
+    width: CARD_SIZE,
+    height: CARD_SIZE + 10,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    marginBottom: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  serviceIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FFE5DE',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  serviceText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#333',
+    textAlign: 'center',
   },
 });
